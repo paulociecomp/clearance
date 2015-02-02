@@ -15,7 +15,7 @@ class Clearance::PasswordResetsController < Clearance::BaseController
   end
 
   def edit
-    @user = find_user_for_edit
+    @password_reset = find_password_reset_by_user_id_and_token
     render template: 'passwords/edit'
   end
 
@@ -56,7 +56,7 @@ class Clearance::PasswordResetsController < Clearance::BaseController
     end
   end
 
-  def find_user_by_id_and_confirmation_token
+  def find_user_from_password_reset
     if matching_password_reset = find_password_reset_by_user_id_and_token
       matching_password_reset.user
     end
@@ -79,11 +79,11 @@ class Clearance::PasswordResetsController < Clearance::BaseController
   end
 
   def find_user_for_edit
-    find_user_by_id_and_confirmation_token
+    find_user_from_password_reset
   end
 
   def find_user_for_update
-    find_user_by_id_and_confirmation_token
+    find_user_from_password_reset
   end
 
   def flash_failure_when_forbidden
@@ -106,7 +106,7 @@ class Clearance::PasswordResetsController < Clearance::BaseController
   end
 
   def forbid_non_existent_user
-    unless find_user_by_id_and_confirmation_token
+    unless find_user_from_password_reset
       flash_failure_when_forbidden
       render template: 'passwords/new'
     end
