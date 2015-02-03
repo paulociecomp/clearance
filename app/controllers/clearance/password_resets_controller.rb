@@ -5,6 +5,7 @@ class Clearance::PasswordResetsController < Clearance::BaseController
   skip_before_filter :authorize, only: [:create, :edit, :new, :update]
   before_filter :forbid_missing_token, only: [:edit, :update]
   before_filter :forbid_non_existent_user, only: [:edit, :update]
+  before_filter :forbid_expired_password_reset, only: [:edit, :update]
 
   def create
     if user = find_user_for_create
@@ -107,6 +108,15 @@ class Clearance::PasswordResetsController < Clearance::BaseController
 
   def forbid_non_existent_user
     unless find_user_from_password_reset
+      flash_failure_when_forbidden
+      render template: 'passwords/new'
+    end
+  end
+
+  def forbid_expired_password_reset
+    matched_password_reset = find_password_reset_by_user_id_and_token
+
+    if matched_password_reset && matched_password_reset.expired?
       flash_failure_when_forbidden
       render template: 'passwords/new'
     end
