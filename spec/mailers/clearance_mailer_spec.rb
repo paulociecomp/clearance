@@ -26,7 +26,7 @@ describe ClearanceMailer do
 
     email = ClearanceMailer.change_password(password_reset)
 
-    expect(email.body.to_s).to include(link)
+    expect(email.body).to include(link)
   end
 
   it "sets its subject" do
