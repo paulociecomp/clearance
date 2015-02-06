@@ -25,11 +25,12 @@ class Clearance::PasswordsController < Clearance::BaseController
   end
 
   def update
-    @user = find_user_for_update
+    @password_reset = find_password_reset_by_user_id_and_token
+    user = @password_reset.user
 
-    if @user.update_password password_reset_params
-      Clearance::PasswordResetDeactivator.new(@user).run
-      sign_in @user
+    if user.update_password password_reset_params
+      Clearance::PasswordResetDeactivator.new(user).run
+      sign_in user
       redirect_to url_after_update
     else
       flash_failure_after_update
@@ -78,14 +79,6 @@ class Clearance::PasswordsController < Clearance::BaseController
   def find_user_for_create
     Clearance.configuration.user_model.
       find_by_normalized_email params[:password][:email]
-  end
-
-  def find_user_for_edit
-    find_user_from_password_reset
-  end
-
-  def find_user_for_update
-    find_user_from_password_reset
   end
 
   def flash_failure_when_forbidden
