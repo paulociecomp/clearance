@@ -39,8 +39,7 @@ describe ClearanceMailer do
 
   it "contains opening text in the body" do
     password_reset = create(:password_reset)
-    allow(Clearance.configuration).to receive(:password_reset_time_limit).
-      and_return(10.minutes)
+    allow(PasswordReset).to receive(:time_limit).and_return(10.minutes)
 
     email = ClearanceMailer.change_password(password_reset)
 
