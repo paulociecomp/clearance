@@ -65,12 +65,6 @@ class Clearance::PasswordsController < Clearance::BaseController
     end
   end
 
-  def find_user_from_password_reset
-    if matching_password_reset = find_password_reset_by_user_id_and_token
-      matching_password_reset.user
-    end
-  end
-
   def find_password_reset_by_user_id_and_token
     PasswordReset.find_by_user_id_and_token(
       params[user_param],
@@ -110,6 +104,12 @@ class Clearance::PasswordsController < Clearance::BaseController
     unless find_user_from_password_reset
       flash_failure_when_forbidden
       render template: 'passwords/new'
+    end
+  end
+
+  def find_user_from_password_reset
+    if matching_password_reset = find_password_reset_by_user_id_and_token
+      matching_password_reset.user
     end
   end
 
